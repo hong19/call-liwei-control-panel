@@ -16,7 +16,21 @@ const counter = (state = 0, action) => {
     }
 };
 
-const store = createStore(counter);
+const appender = (state = 'a', action) => {
+    switch (action.type) {
+        case 'APPEND A':
+            return state + 'A';
+        default:
+            return state;
+    }
+};
+
+const countApp = combineReducers({
+    counter, appender
+});
+
+
+const store = createStore(countApp);
 
 class CountApp extends React.Component {
     constructor() {
@@ -30,11 +44,20 @@ class CountApp extends React.Component {
         store.dispatch({
             type: 'INCREMENT'
         });
+
+
     }
+
 
     decrease() {
         store.dispatch({
             type: 'DECREMENT'
+        });
+    }
+
+    appendA() {
+        store.dispatch({
+            type: 'APPEND A'
         });
     }
 
@@ -48,6 +71,9 @@ class CountApp extends React.Component {
                 </button>
                 <button onClick={this.decrease.bind(this)}>
                     - 1
+                </button>
+                <button onClick={this.appendA.bind(this)}>
+                    append A
                 </button>
             </div>
         );
@@ -64,7 +90,7 @@ ReactDOM.render(<CountApp />, document.getElementById('root'));
 
 const render = () => {
     ReactDOM.render(
-        <CountApp number={store.getState()}/>,
+        <CountApp number={store.getState().counter}/>,
         document.getElementById('root')
     );
 };

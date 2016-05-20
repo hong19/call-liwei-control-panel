@@ -20273,7 +20273,23 @@ var counter = function counter() {
     }
 };
 
-var store = (0, _redux.createStore)(counter);
+var appender = function appender() {
+    var state = arguments.length <= 0 || arguments[0] === undefined ? 'a' : arguments[0];
+    var action = arguments[1];
+
+    switch (action.type) {
+        case 'APPEND A':
+            return state + 'A';
+        default:
+            return state;
+    }
+};
+
+var countApp = (0, _redux.combineReducers)({
+    counter: counter, appender: appender
+});
+
+var store = (0, _redux.createStore)(countApp);
 
 var CountApp = function (_React$Component) {
     _inherits(CountApp, _React$Component);
@@ -20304,6 +20320,13 @@ var CountApp = function (_React$Component) {
             });
         }
     }, {
+        key: 'appendA',
+        value: function appendA() {
+            store.dispatch({
+                type: 'APPEND A'
+            });
+        }
+    }, {
         key: 'render',
         value: function render() {
             return _react2.default.createElement(
@@ -20324,6 +20347,11 @@ var CountApp = function (_React$Component) {
                     'button',
                     { onClick: this.decrease.bind(this) },
                     '- 1'
+                ),
+                _react2.default.createElement(
+                    'button',
+                    { onClick: this.appendA.bind(this) },
+                    'append A'
                 )
             );
         }
@@ -20340,7 +20368,7 @@ store.subscribe(function () {
 _reactDom2.default.render(_react2.default.createElement(CountApp, null), document.getElementById('root'));
 
 var render = function render() {
-    _reactDom2.default.render(_react2.default.createElement(CountApp, { number: store.getState() }), document.getElementById('root'));
+    _reactDom2.default.render(_react2.default.createElement(CountApp, { number: store.getState().counter }), document.getElementById('root'));
 };
 
 },{"react":167,"react-dom":29,"redux":173}]},{},[181]);
