@@ -20281,14 +20281,26 @@ var CountApp = function (_React$Component) {
     function CountApp() {
         _classCallCheck(this, CountApp);
 
-        return _possibleConstructorReturn(this, Object.getPrototypeOf(CountApp).call(this));
+        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(CountApp).call(this));
+
+        _this.state = {
+            number: 0
+        };
+        return _this;
     }
 
     _createClass(CountApp, [{
-        key: 'increment',
-        value: function increment() {
+        key: 'increase',
+        value: function increase() {
             store.dispatch({
                 type: 'INCREMENT'
+            });
+        }
+    }, {
+        key: 'decrease',
+        value: function decrease() {
+            store.dispatch({
+                type: 'DECREMENT'
             });
         }
     }, {
@@ -20297,11 +20309,21 @@ var CountApp = function (_React$Component) {
             return _react2.default.createElement(
                 'div',
                 null,
+                _react2.default.createElement(
+                    'h1',
+                    null,
+                    this.props.number
+                ),
                 'Count APP',
                 _react2.default.createElement(
                     'button',
-                    { onClick: this.increment.bind(this) },
+                    { onClick: this.increase.bind(this) },
                     '+ 1'
+                ),
+                _react2.default.createElement(
+                    'button',
+                    { onClick: this.decrease.bind(this) },
+                    '- 1'
                 )
             );
         }
@@ -20311,13 +20333,14 @@ var CountApp = function (_React$Component) {
 }(_react2.default.Component);
 
 store.subscribe(function () {
+    render();
     console.log(store.getState());
 });
 
 _reactDom2.default.render(_react2.default.createElement(CountApp, null), document.getElementById('root'));
 
 var render = function render() {
-    _reactDom2.default.render(_react2.default.createElement(CountApp, null), document.getElementById('root'));
+    _reactDom2.default.render(_react2.default.createElement(CountApp, { number: store.getState() }), document.getElementById('root'));
 };
 
 },{"react":167,"react-dom":29,"redux":173}]},{},[181]);
