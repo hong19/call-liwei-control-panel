@@ -27,6 +27,17 @@ const todo = (state, action) => {
 };
 
 
+const visibilityFilter = (state = 'SHOW_ALL',
+                          action) => {
+    switch (action.type) {
+
+        case 'SET_VISIBILITY_FILTER':
+            return action.filter;
+        default:
+            return state;
+    }
+};
+
 const todos = (state = [], action) => {
     switch (action.type) {
         case 'ADD_TODO':
@@ -45,15 +56,22 @@ const todos = (state = [], action) => {
 
 };
 
-const store = createStore.create(todos);
+const todoApp = (state = {}, action) => {
+    return {
+        todos: todos(state.todos, action),
+        visibilityFilter: visibilityFilter(state.visibilityFilter, action)
+    };
+};
+
+const store = createStore(todoApp);
 
 store.dispatch({
     type: 'ADD_TODO',
     id: 1,
-    text: 'ljlsdf'
+    text: 'hello world'
 });
 
-console.log(store.getState());  
+console.log(store.getState());
 
 
 

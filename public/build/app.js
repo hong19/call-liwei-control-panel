@@ -20248,35 +20248,80 @@ var _reactDom2 = _interopRequireDefault(_reactDom);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var todos = function todos() {
-    var state = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
-    var action = arguments[1];
-
-    switch (action) {
+var todo = function todo(state, action) {
+    switch (action.type) {
         case 'ADD_TODO':
-            return state.concat([{
+            return {
                 id: action.id,
                 text: action.text,
                 completed: false
-            }]);
-
+            };
         case 'TOGGLE_TODO':
-            return state.map(function (todo) {
-                if (todo.id !== action.id) {
-                    return todo;
-                } else {
-                    return todo.assign({
-                        completed: !todo.completed
-                    });
-                }
-            });
-
+            if (state.id !== action.id) {
+                return state;
+            } else {
+                return state.assign({
+                    completed: !state.completed
+                });
+            }
         default:
             return state;
     }
 }; /**
     * Created by hong on 2016/5/19.
     */
+
+
+var visibilityFilter = function visibilityFilter() {
+    var state = arguments.length <= 0 || arguments[0] === undefined ? 'SHOW_ALL' : arguments[0];
+    var action = arguments[1];
+
+    switch (action.type) {
+
+        case 'SET_VISIBILITY_FILTER':
+            return action.filter;
+        default:
+            return state;
+    }
+};
+
+var todos = function todos() {
+    var state = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
+    var action = arguments[1];
+
+    switch (action.type) {
+        case 'ADD_TODO':
+            return state.concat([todo(undefined, action)]);
+
+        case 'TOGGLE_TODO':
+            return state.map(function (t) {
+                return todo(t, action);
+            });
+
+        default:
+            return state;
+    }
+};
+
+var todoApp = function todoApp() {
+    var state = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+    var action = arguments[1];
+
+    return {
+        todos: todos(state.todos, action),
+        visibilityFilter: visibilityFilter(state.visibilityFilter, action)
+    };
+};
+
+var store = (0, _redux.createStore)(todoApp);
+
+store.dispatch({
+    type: 'ADD_TODO',
+    id: 1,
+    text: 'hello world'
+});
+
+console.log(store.getState());
 
 },{"react":167,"react-dom":29,"redux":173}]},{},[181]);
 
