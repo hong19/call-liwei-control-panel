@@ -20331,19 +20331,25 @@ var TodoApp = function (_React$Component) {
         value: function addTodo() {
             store.dispatch({
                 type: 'ADD_TODO',
-                text: 'hello',
+                text: this.input.value,
                 id: nextTodoId++
             });
+            this.input.value = '';
         }
     }, {
         key: 'render',
         value: function render() {
+            var _this2 = this;
+
             return _react2.default.createElement(
                 'div',
                 null,
+                _react2.default.createElement('input', { ref: function ref(node) {
+                        _this2.input = node;
+                    } }),
                 _react2.default.createElement(
                     'button',
-                    { onClick: this.addTodo },
+                    { onClick: this.addTodo.bind(this) },
                     'Add Todo'
                 ),
                 _react2.default.createElement(
