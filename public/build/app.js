@@ -20248,6 +20248,36 @@ var _reactDom2 = _interopRequireDefault(_reactDom);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+var todos = function todos() {
+    var state = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
+    var action = arguments[1];
+
+    switch (action) {
+        case 'ADD_TODO':
+            return state.concat([{
+                id: action.id,
+                text: action.text,
+                completed: false
+            }]);
+
+        case 'TOGGLE_TODO':
+            return state.map(function (todo) {
+                if (todo.id !== action.id) {
+                    return todo;
+                } else {
+                    return todo.assign({
+                        completed: !todo.completed
+                    });
+                }
+            });
+
+        default:
+            return state;
+    }
+}; /**
+    * Created by hong on 2016/5/19.
+    */
+
 },{"react":167,"react-dom":29,"redux":173}]},{},[181]);
 
 //# sourceMappingURL=app.js.map
