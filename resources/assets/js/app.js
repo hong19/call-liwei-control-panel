@@ -56,22 +56,53 @@ const todos = (state = [], action) => {
 
 };
 
-const todoApp = (state = {}, action) => {
-    return {
-        todos: todos(state.todos, action),
-        visibilityFilter: visibilityFilter(state.visibilityFilter, action)
-    };
-};
+const todoApp = combineReducers({todos, visibilityFilter});
 
 const store = createStore(todoApp);
 
-store.dispatch({
-    type: 'ADD_TODO',
-    id: 1,
-    text: 'hello world'
-});
+let nextTodoId = 0;
 
-console.log(store.getState());
+class TodoApp extends React.Component {
+    addTodo() {
+        store.dispatch({
+            type: 'ADD_TODO',
+            text: 'hello',
+            id: nextTodoId++
+        })
+    }
+
+    render() {
+        return (
+            <div>
+                <button onClick={this.addTodo}>Add Todo</button>
+                <ul>
+                    {this.props.todos.map(
+                        todo => (
+                            <li key={todo.id}>
+                                {todo.text}
+                            </li>
+                        )
+                    )}
+                </ul>
+            </div>
+
+        );
+    }
+
+
+}
+
+const render = () => {
+    ReactDOM.render(
+        <TodoApp
+            todos={store.getState().todos}
+        />,
+        document.getElementById('root')
+    );
+};
+
+store.subscribe(render);
+render();
 
 
 

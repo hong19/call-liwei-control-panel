@@ -20236,6 +20236,8 @@ module.exports = function symbolObservablePonyfill(root) {
 },{}],181:[function(require,module,exports){
 'use strict';
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 var _redux = require('redux');
 
 var _react = require('react');
@@ -20247,6 +20249,15 @@ var _reactDom = require('react-dom');
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Created by hong on 2016/5/19.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
 
 var todo = function todo(state, action) {
     switch (action.type) {
@@ -20267,10 +20278,7 @@ var todo = function todo(state, action) {
         default:
             return state;
     }
-}; /**
-    * Created by hong on 2016/5/19.
-    */
-
+};
 
 var visibilityFilter = function visibilityFilter() {
     var state = arguments.length <= 0 || arguments[0] === undefined ? 'SHOW_ALL' : arguments[0];
@@ -20303,25 +20311,67 @@ var todos = function todos() {
     }
 };
 
-var todoApp = function todoApp() {
-    var state = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
-    var action = arguments[1];
-
-    return {
-        todos: todos(state.todos, action),
-        visibilityFilter: visibilityFilter(state.visibilityFilter, action)
-    };
-};
+var todoApp = (0, _redux.combineReducers)({ todos: todos, visibilityFilter: visibilityFilter });
 
 var store = (0, _redux.createStore)(todoApp);
 
-store.dispatch({
-    type: 'ADD_TODO',
-    id: 1,
-    text: 'hello world'
-});
+var nextTodoId = 0;
 
-console.log(store.getState());
+var TodoApp = function (_React$Component) {
+    _inherits(TodoApp, _React$Component);
+
+    function TodoApp() {
+        _classCallCheck(this, TodoApp);
+
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(TodoApp).apply(this, arguments));
+    }
+
+    _createClass(TodoApp, [{
+        key: 'addTodo',
+        value: function addTodo() {
+            store.dispatch({
+                type: 'ADD_TODO',
+                text: 'hello',
+                id: nextTodoId++
+            });
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            return _react2.default.createElement(
+                'div',
+                null,
+                _react2.default.createElement(
+                    'button',
+                    { onClick: this.addTodo },
+                    'Add Todo'
+                ),
+                _react2.default.createElement(
+                    'ul',
+                    null,
+                    this.props.todos.map(function (todo) {
+                        return _react2.default.createElement(
+                            'li',
+                            { key: todo.id },
+                            todo.text
+                        );
+                    })
+                )
+            );
+        }
+    }]);
+
+    return TodoApp;
+}(_react2.default.Component);
+
+var render = function render() {
+    _reactDom2.default.render(_react2.default.createElement(TodoApp, {
+        todos: store.getState().todos
+    }), document.getElementById('root'));
+};
+
+store.subscribe(render);
+render();
 
 },{"react":167,"react-dom":29,"redux":173}]},{},[181]);
 
