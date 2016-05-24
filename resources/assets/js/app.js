@@ -17,7 +17,7 @@ const todo = (state, action) => {
             if (state.id !== action.id) {
                 return state;
             } else {
-                return state.assign({
+                return Object.assign({}, state, {
                     completed: !state.completed
                 });
             }
@@ -77,12 +77,24 @@ class TodoApp extends React.Component {
             <div>
                 <input ref={node => {
                     this.input = node;
-                }} />
+                }}/>
                 <button onClick={this.addTodo.bind(this)}>Add Todo</button>
                 <ul>
                     {this.props.todos.map(
                         todo => (
-                            <li key={todo.id}>
+                            <li key={todo.id}
+                                onClick={()=>{
+                                    store.dispatch({
+                                        type: 'TOGGLE_TODO',
+                                        id: todo.id
+                                    });
+                                }}
+                                style={{
+                                    textDecoration: todo.completed ?
+                                        'line-through' :
+                                        'none'
+                            }}>
+
                                 {todo.text}
                             </li>
                         )
