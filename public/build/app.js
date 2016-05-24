@@ -20238,6 +20238,11 @@ module.exports = function symbolObservablePonyfill(root) {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; /**
+                                                                                                                                                                                                                                                                   * Created by hong on 2016/5/19.
+                                                                                                                                                                                                                                                                   */
+
+
 var _redux = require('redux');
 
 var _react = require('react');
@@ -20254,10 +20259,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Created by hong on 2016/5/19.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
-
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var todo = function todo(state, action) {
     switch (action.type) {
@@ -20356,6 +20358,40 @@ var FilterLink = function FilterLink(_ref) {
     );
 };
 
+var Todo = function Todo(_ref2) {
+    var onClick = _ref2.onClick;
+    var completed = _ref2.completed;
+    var text = _ref2.text;
+    return _react2.default.createElement(
+        'li',
+        {
+            onClick: onClick,
+            style: {
+                textDecoration: completed ? 'line-through' : 'none'
+            }
+        },
+        text
+    );
+};
+
+var TodoList = function TodoList(_ref3) {
+    var todos = _ref3.todos;
+    var onTodoClick = _ref3.onTodoClick;
+    return _react2.default.createElement(
+        'ul',
+        null,
+        todos.map(function (todo) {
+            return _react2.default.createElement(Todo, _extends({
+                key: todo.id
+            }, todo, {
+                onClick: function onClick() {
+                    return onTodoClick(todo.id);
+                }
+            }));
+        })
+    );
+};
+
 var nextTodoId = 0;
 
 var TodoApp = function (_React$Component) {
@@ -20400,26 +20436,15 @@ var TodoApp = function (_React$Component) {
                     { onClick: this.addTodo.bind(this) },
                     'Add Todo'
                 ),
-                _react2.default.createElement(
-                    'ul',
-                    null,
-                    visibleTodos.map(function (todo) {
-                        return _react2.default.createElement(
-                            'li',
-                            { key: todo.id,
-                                onClick: function onClick() {
-                                    store.dispatch({
-                                        type: 'TOGGLE_TODO',
-                                        id: todo.id
-                                    });
-                                },
-                                style: {
-                                    textDecoration: todo.completed ? 'line-through' : 'none'
-                                } },
-                            todo.text
-                        );
-                    })
-                ),
+                _react2.default.createElement(TodoList, {
+                    todos: visibleTodos,
+                    onTodoClick: function onTodoClick(id) {
+                        store.dispatch({
+                            type: 'TOGGLE_TODO',
+                            id: id
+                        });
+                    }
+                }),
                 _react2.default.createElement(
                     'p',
                     null,
