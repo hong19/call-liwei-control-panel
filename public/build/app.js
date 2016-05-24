@@ -20285,7 +20285,6 @@ var visibilityFilter = function visibilityFilter() {
     var action = arguments[1];
 
     switch (action.type) {
-
         case 'SET_VISIBILITY_FILTER':
             return action.filter;
         default:
@@ -20311,9 +20310,51 @@ var todos = function todos() {
     }
 };
 
+var getVisibleTodos = function getVisibleTodos(todos, filter) {
+    switch (filter) {
+        case 'SHOW_ALL':
+            return todos;
+        case 'SHOW_COMPLETED':
+            return todos.filter(function (t) {
+                return t.completed;
+            });
+        case 'SHOW_ACTIVE':
+            return todos.filter(function (t) {
+                return !t.completed;
+            });
+    }
+};
+
 var todoApp = (0, _redux.combineReducers)({ todos: todos, visibilityFilter: visibilityFilter });
 
 var store = (0, _redux.createStore)(todoApp);
+
+var FilterLink = function FilterLink(_ref) {
+    var filter = _ref.filter;
+    var currentFilter = _ref.currentFilter;
+    var children = _ref.children;
+
+    if (filter === currentFilter) {
+        return _react2.default.createElement(
+            'span',
+            null,
+            children
+        );
+    }
+    return _react2.default.createElement(
+        'a',
+        { href: '#',
+            onClick: function onClick(e) {
+                e.preventDefault();
+                store.dispatch({
+                    type: 'SET_VISIBILITY_FILTER',
+                    filter: filter
+                });
+            }
+        },
+        children
+    );
+};
 
 var nextTodoId = 0;
 
@@ -20341,6 +20382,13 @@ var TodoApp = function (_React$Component) {
         value: function render() {
             var _this2 = this;
 
+            var _props = this.props;
+            var todos = _props.todos;
+            var visibilityFilter = _props.visibilityFilter;
+
+
+            var visibleTodos = getVisibleTodos(todos, visibilityFilter);
+
             return _react2.default.createElement(
                 'div',
                 null,
@@ -20355,7 +20403,7 @@ var TodoApp = function (_React$Component) {
                 _react2.default.createElement(
                     'ul',
                     null,
-                    this.props.todos.map(function (todo) {
+                    visibleTodos.map(function (todo) {
                         return _react2.default.createElement(
                             'li',
                             { key: todo.id,
@@ -20371,6 +20419,35 @@ var TodoApp = function (_React$Component) {
                             todo.text
                         );
                     })
+                ),
+                _react2.default.createElement(
+                    'p',
+                    null,
+                    'Show:',
+                    ' ',
+                    _react2.default.createElement(
+                        FilterLink,
+                        { filter: 'SHOW_ALL',
+                            currentFilter: visibilityFilter
+                        },
+                        'All'
+                    ),
+                    ' ',
+                    _react2.default.createElement(
+                        FilterLink,
+                        { filter: 'SHOW_ACTIVE',
+                            currentFilter: visibilityFilter
+                        },
+                        'Active'
+                    ),
+                    ' ',
+                    _react2.default.createElement(
+                        FilterLink,
+                        { filter: 'SHOW_COMPLETED',
+                            currentFilter: visibilityFilter
+                        },
+                        'Completed'
+                    )
                 )
             );
         }
@@ -20380,9 +20457,10 @@ var TodoApp = function (_React$Component) {
 }(_react2.default.Component);
 
 var render = function render() {
-    _reactDom2.default.render(_react2.default.createElement(TodoApp, {
-        todos: store.getState().todos
-    }), document.getElementById('root'));
+    _reactDom2.default.render(_react2.default.createElement(TodoApp
+    /*todos={store.getState().todos}
+    visibilityFilter={store.getState().visibilityFilter}*/
+    , store.getState()), document.getElementById('root'));
 };
 
 store.subscribe(render);
