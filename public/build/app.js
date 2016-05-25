@@ -20236,10 +20236,9 @@ module.exports = function symbolObservablePonyfill(root) {
 },{}],181:[function(require,module,exports){
 'use strict';
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; /**
-                                                                                                                                                                                                                                                                   * Created by hong on 2016/5/19.
-                                                                                                                                                                                                                                                                   */
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _redux = require('redux');
 
@@ -20252,6 +20251,15 @@ var _reactDom = require('react-dom');
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Created by hong on 2016/5/19.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
 
 var todo = function todo(state, action) {
     switch (action.type) {
@@ -20323,13 +20331,12 @@ var todoApp = (0, _redux.combineReducers)({ todos: todos, visibilityFilter: visi
 
 var store = (0, _redux.createStore)(todoApp);
 
-var FilterLink = function FilterLink(_ref) {
-    var filter = _ref.filter;
-    var currentFilter = _ref.currentFilter;
+var Link = function Link(_ref) {
+    var active = _ref.active;
     var children = _ref.children;
     var _onClick = _ref.onClick;
 
-    if (filter === currentFilter) {
+    if (active) {
         return _react2.default.createElement(
             'span',
             null,
@@ -20341,12 +20348,43 @@ var FilterLink = function FilterLink(_ref) {
         { href: '#',
             onClick: function onClick(e) {
                 e.preventDefault();
-                _onClick(filter);
+                _onClick();
             }
         },
         children
     );
 };
+
+var FilterLink = function (_React$Component) {
+    _inherits(FilterLink, _React$Component);
+
+    function FilterLink() {
+        _classCallCheck(this, FilterLink);
+
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(FilterLink).apply(this, arguments));
+    }
+
+    _createClass(FilterLink, [{
+        key: 'render',
+        value: function render() {
+            var props = this.props;
+            var state = store.getState();
+
+            return _react2.default.createElement(Link, {
+                active: props.filter === state.visibilityFilter,
+                onClick: function onClick() {
+                    return store.dispatch({
+                        type: 'SET_VISIBILITY_FILTER',
+                        filter: props.filter
+                    });
+                },
+                children: props.children
+            });
+        }
+    }]);
+
+    return FilterLink;
+}(_react2.default.Component);
 
 var Todo = function Todo(_ref2) {
     var onClick = _ref2.onClick;
@@ -20404,9 +20442,7 @@ var AddTodo = function AddTodo(_ref4) {
     );
 };
 
-var Footer = function Footer(_ref5) {
-    var visibilityFilter = _ref5.visibilityFilter;
-    var onFilterClick = _ref5.onFilterClick;
+var Footer = function Footer() {
     return _react2.default.createElement(
         'p',
         null,
@@ -20414,27 +20450,24 @@ var Footer = function Footer(_ref5) {
         ' ',
         _react2.default.createElement(
             FilterLink,
-            { filter: 'SHOW_ALL',
-                currentFilter: visibilityFilter,
-                onClick: onFilterClick
+            { filter: 'SHOW_ALL'
+
             },
             'All'
         ),
         ' ',
         _react2.default.createElement(
             FilterLink,
-            { filter: 'SHOW_ACTIVE',
-                currentFilter: visibilityFilter,
-                onClick: onFilterClick
+            { filter: 'SHOW_ACTIVE'
+
             },
             'Active'
         ),
         ' ',
         _react2.default.createElement(
             FilterLink,
-            { filter: 'SHOW_COMPLETED',
-                currentFilter: visibilityFilter,
-                onClick: onFilterClick
+            { filter: 'SHOW_COMPLETED'
+
             },
             'Completed'
         )
@@ -20442,9 +20475,9 @@ var Footer = function Footer(_ref5) {
 };
 
 var nextTodoId = 0;
-var TodoApp = function TodoApp(_ref6) {
-    var todos = _ref6.todos;
-    var visibilityFilter = _ref6.visibilityFilter;
+var TodoApp = function TodoApp(_ref5) {
+    var todos = _ref5.todos;
+    var visibilityFilter = _ref5.visibilityFilter;
     return _react2.default.createElement(
         'div',
         null,
@@ -20458,7 +20491,7 @@ var TodoApp = function TodoApp(_ref6) {
             }
         }),
         _react2.default.createElement(TodoList, {
-            todos: getVisibilityTodos(todos, visibilityFilter),
+            todos: getVisibleTodos(todos, visibilityFilter),
             onTodoClick: function onTodoClick(id) {
                 store.dispatch({
                     type: 'TOGGLE_TODO',
@@ -20466,15 +20499,7 @@ var TodoApp = function TodoApp(_ref6) {
                 });
             }
         }),
-        _react2.default.createElement(Footer, {
-            visibilitiyFilter: visibilityFilter,
-            onFilterClick: function onFilterClick(filter) {
-                return store.dispatch({
-                    type: 'SET_VISIBILITY_FILTER',
-                    filter: filter
-                });
-            }
-        })
+        _react2.default.createElement(Footer, null)
     );
 };
 
