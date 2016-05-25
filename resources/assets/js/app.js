@@ -91,6 +91,17 @@ const Link = ({active, children, onClick}) => {
 };
 
 class FilterLink extends React.Component {
+    componentDidMount() {
+        this.unsubcribe = store.subscribe(() =>
+            this.forceUpdate()
+        );
+    }
+
+    componentWillUnmount() {
+        this.unsubcribe();
+    }
+
+
     render() {
         const props = this.props;
         const state = store.getState();

@@ -20365,6 +20365,9 @@ var FilterLink = function (_React$Component) {
     }
 
     _createClass(FilterLink, [{
+        key: 'componentDidMount',
+        value: function componentDidMount() {}
+    }, {
         key: 'render',
         value: function render() {
             var props = this.props;
